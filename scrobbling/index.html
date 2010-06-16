@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+    </head>
+    <body>
+        <script language="javascript" src="webtoolkit.md5.js"></script>
+       
+        <script language="javascript">
+            function setTimestampToNow() {
+                form = document.scrobbleForm.timestamp.value = Math.round(new Date().getTime() / 1000);
+            }
+
+            function updateSignature() {
+                apiSecret = document.apiSecretForm.apiSecret.value;
+                if (apiSecret.length != 32) {
+                    alert("Can't calculate signature, we need a 32 byte api secret")
+                }
+                form = document.scrobbleForm;
+                var params = new Array()
+                var keys = new Array()
+                for (var i = 0; i < form.elements.length; i++) {
+                    ele = form.elements[i];
+                    if (ele.type == "text" && ele.name != "api_sig") {
+                        params[ele.name] = ele.value
+                        keys.push(ele.name)
+                    }
+                }
+                keys = keys.sort();
+                var sig = "";
+
+                for (var i = 0; k = keys[i], i < keys.length; i++) {
+                    sig += k + params[k];
+                }
+                form.api_sig.value = MD5(sig + apiSecret);
+            }
+
+        </script>
+
+        <form name="apiSecretForm">
+            Api Secret=
+            <input type=text name="apiSecret"/>
+            (this is used for calculating the signature it should not be submitted in a scrobble)
+        </form>
+
+        <h2>Scrobble Parameters</h2>
+        <form name="scrobbleForm" action="http://post.audioscrobbler.com/2.0/" method="post" accept-charset="UTF-8">
+            method=
+            <input type=text name="method" readonly=true value="Track.scrobble"/>
+            <br/>
+            artist=
+            <input type=text name="artist"/>
+            <br/>
+            track=
+            <input type=text name="track" />
+            <br/>
+            timestamp=
+            <input type=text name="timestamp" /><button type="button" onclick="setTimestampToNow()">Now</button>
+            <br/>
+            sk=
+            <input type=text name="sk" />
+            <br/>
+            api_key=
+            <input type=text name="api_key" />
+            <br/>
+            api_sig=
+            <input type=text readonly=true name="api_sig"/>
+            <button type="button" onclick="updateSignature()">Calculate with secret</button>
+            <br/>
+            <button type="submit">Submit scrobble</button>            
+        </form>
+    </body>
+</html>
+
+
