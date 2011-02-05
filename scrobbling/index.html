@@ -10,10 +10,14 @@
                 form = document.scrobbleForm.timestamp.value = Math.round(new Date().getTime() / 1000);
             }
 
+            /**
+            *
+            */
             function updateSignature() {
                 apiSecret = document.apiSecretForm.apiSecret.value;
                 if (apiSecret.length != 32) {
                     alert("Can't calculate signature, we need a 32 byte api secret")
+                    return;
                 }
                 form = document.scrobbleForm;
                 var params = new Array()
@@ -35,6 +39,9 @@
             }
 
         </script>
+
+        <p>This is an example scrobbling client. See how simple it is! Check out the source code.</p>
+        
 
         <form name="apiSecretForm">
             Api Secret=
